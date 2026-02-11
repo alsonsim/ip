@@ -66,12 +66,12 @@ class DeoLogic {
             return;
         }
 
-        System.out.println(" ☹ OOPS!!! I'm sorry, but I don't know what that means :-(");
+        System.out.println(" I'm too stupid to understand what do you mean ");
     }
 
     private void addTodo(String desc) {
         if (desc.isEmpty()) {
-            System.out.println(" ☹ OOPS!!! The description of a todo cannot be empty.");
+            System.out.println(" Can't be empty dummy!");
             return;
         }
         addTask(new Todo(desc));
@@ -80,13 +80,13 @@ class DeoLogic {
     private void addDeadline(String rest) {
         int split = rest.indexOf(" /by ");
         if (split <= 0) {
-            System.out.println(" ☹ OOPS!!! Use: deadline DESCRIPTION /by BY");
+            System.out.println(" dummy Use: deadline DESCRIPTION /by BY");
             return;
         }
         String desc = rest.substring(0, split).trim();
         String by = rest.substring(split + 5).trim();
         if (desc.isEmpty() || by.isEmpty()) {
-            System.out.println(" ☹ OOPS!!! Use: deadline DESCRIPTION /by BY");
+            System.out.println(" dummy Use: deadline DESCRIPTION /by BY");
             return;
         }
         addTask(new Deadline(desc, by));
@@ -96,14 +96,14 @@ class DeoLogic {
         int fromIdx = rest.indexOf(" /from ");
         int toIdx = rest.indexOf(" /to ");
         if (fromIdx <= 0 || toIdx <= 0 || toIdx <= fromIdx) {
-            System.out.println(" ☹ OOPS!!! Use: event DESCRIPTION /from FROM /to TO");
+            System.out.println(" dumb ahh Use: event DESCRIPTION /from FROM /to TO");
             return;
         }
         String desc = rest.substring(0, fromIdx).trim();
         String from = rest.substring(fromIdx + 7, toIdx).trim();
         String to = rest.substring(toIdx + 5).trim();
         if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            System.out.println(" ☹ OOPS!!! Use: event DESCRIPTION /from FROM /to TO");
+            System.out.println(" dumb ahh Use: event DESCRIPTION /from FROM /to TO");
             return;
         }
         addTask(new Event(desc, from, to));
@@ -111,7 +111,7 @@ class DeoLogic {
 
     private void addTask(Task t) {
         if (taskCount >= tasks.length) {
-            System.out.println(" ☹ OOPS!!! Task list is full.");
+            System.out.println(" dumb ahh  Task list is full.");
             return;
         }
         tasks[taskCount++] = t;
@@ -134,7 +134,7 @@ class DeoLogic {
     private void markTask(String numStr) {
         int index = parseIndex(numStr);
         if (index == -1) {
-            System.out.println(" ☹ OOPS!!! Please give a valid task number.");
+            System.out.println(" dumb ahh Please give a valid task number.");
             return;
         }
         tasks[index].markAsDone();
@@ -145,7 +145,7 @@ class DeoLogic {
     private void unmarkTask(String numStr) {
         int index = parseIndex(numStr);
         if (index == -1) {
-            System.out.println(" ☹ OOPS!!! Please give a valid task number.");
+            System.out.println(" dumb ahh Please give a valid task number.");
             return;
         }
         tasks[index].markAsUndone();
