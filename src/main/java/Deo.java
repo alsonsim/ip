@@ -26,6 +26,12 @@ public class Deo {
     }
 }
 
+class DeoException extends Exception {
+    DeoException(String message) {
+        super(message);
+    }
+}
+
 class DeoLogic {
     private final Task[] tasks = new Task[100];
     private int taskCount = 0;
@@ -36,83 +42,83 @@ class DeoLogic {
     }
 
     void handleCommand(String input) {
-        if (input.equals("list")) {
-            listTasks();
-            return;
-        }
-        if (input.startsWith("mark ")) {
-            markTask(input.substring(5));
-            return;
-        }
-        if (input.startsWith("unmark ")) {
-            unmarkTask(input.substring(7));
-            return;
-        }
-        if (input.equals("bye")) {
-            exit = true;
-            return;
+        try {
+            if (input.equals("list")) {
+                listTasks();
+                return;
+            }
+            if (input.startsWith("mark ")) {
+                markTask(input.substring(5));
+                return;
+            }
+            if (input.startsWith("unmark ")) {
+                unmarkTask(input.substring(7));
+                return;
+            }
+            if (input.equals("bye")) {
+                exit = true;
+                return;
+            }
+
+            if (input.startsWith("todo ")) {
+                addTodo(input.substring(5).trim());
+                return;
+            }
+            if (input.startsWith("deadline ")) {
+                addDeadline(input.substring(9).trim());
+                return;
+            }
+            if (input.startsWith("event ")) {
+                addEvent(input.substring(6).trim());
+                return;
+            }
+
+            throw new DeoException(" I'm too stupid to understand what do you mean ");
+
+        } catch (DeoException e) {
+            System.out.println(e.getMessage());
         }
 
-        if (input.startsWith("todo ")) {
-            addTodo(input.substring(5).trim());
-            return;
-        }
-        if (input.startsWith("deadline ")) {
-            addDeadline(input.substring(9).trim());
-            return;
-        }
-        if (input.startsWith("event ")) {
-            addEvent(input.substring(6).trim());
-            return;
-        }
-
-        System.out.println(" I'm too stupid to understand what do you mean ");
     }
 
-    private void addTodo(String desc) {
+    private void addTodo(String desc) throws DeoException {
         if (desc.isEmpty()) {
-            System.out.println(" Can't be empty dummy!");
-            return;
+            throw new DeoException("The name cannot be empty dumb ahhhh");
         }
         addTask(new Todo(desc));
     }
 
-    private void addDeadline(String rest) {
+    private void addDeadline(String rest) throws DeoException {
         int split = rest.indexOf(" /by ");
         if (split <= 0) {
-            System.out.println(" dummy Use: deadline DESCRIPTION /by BY");
-            return;
+            throw new DeoException(" dummy Use: deadline DESCRIPTION /by BY");
         }
         String desc = rest.substring(0, split).trim();
         String by = rest.substring(split + 5).trim();
         if (desc.isEmpty() || by.isEmpty()) {
-            System.out.println(" dummy Use: deadline DESCRIPTION /by BY");
-            return;
+            throw new DeoException(" dummy Use: deadline DESCRIPTION /by BY");
         }
         addTask(new Deadline(desc, by));
     }
 
-    private void addEvent(String rest) {
+    private void addEvent(String rest) throws DeoException {
         int fromIdx = rest.indexOf(" /from ");
         int toIdx = rest.indexOf(" /to ");
         if (fromIdx <= 0 || toIdx <= 0 || toIdx <= fromIdx) {
-            System.out.println(" dumb ahh Use: event DESCRIPTION /from FROM /to TO");
-            return;
+            throw new DeoException(" dumb ahh Use: event DESCRIPTION /from FROM /to TO");
         }
         String desc = rest.substring(0, fromIdx).trim();
         String from = rest.substring(fromIdx + 7, toIdx).trim();
         String to = rest.substring(toIdx + 5).trim();
         if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            System.out.println(" dumb ahh Use: event DESCRIPTION /from FROM /to TO");
-            return;
+            throw new DeoException(" dumb ahh Use: event DESCRIPTION /from FROM /to TO");
         }
         addTask(new Event(desc, from, to));
     }
 
-    private void addTask(Task t) {
+    private void addTask(Task t) throws DeoException {
         if (taskCount >= tasks.length) {
-            System.out.println(" dumb ahh  Task list is full.");
-            return;
+            throw new DeoException(" dumb ahh  Task list is full.");
         }
         tasks[taskCount++] = t;
         System.out.println(" Got it. I've added this task:");
@@ -120,7 +126,7 @@ class DeoLogic {
         System.out.println(" Now you have " + taskCount + " tasks in the list.");
     }
 
-    private void listTasks() {
+    private void listTasks() throws DeoException {
         System.out.println(" Here are the tasks in your list:");
         if (taskCount == 0) {
             System.out.println(" No tasks");
@@ -131,22 +137,20 @@ class DeoLogic {
         }
     }
 
-    private void markTask(String numStr) {
+    private void markTask(String numStr) throws DeoException {
         int index = parseIndex(numStr);
         if (index == -1) {
-            System.out.println(" dumb ahh Please give a valid task number.");
-            return;
+            throw new DeoException(" dumb ahh Please give a valid task number.");
         }
         tasks[index].markAsDone();
         System.out.println(" Nice! I've marked this task as done:");
         System.out.println("  " + tasks[index]);
     }
 
-    private void unmarkTask(String numStr) {
+    private void unmarkTask(String numStr) throws DeoException {
         int index = parseIndex(numStr);
         if (index == -1) {
-            System.out.println(" dumb ahh Please give a valid task number.");
-            return;
+            throw new DeoException("dumb ahh Please give a valid task number.");
         }
         tasks[index].markAsUndone();
         System.out.println(" OK, I've marked this task as not done yet:");
