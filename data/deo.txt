@@ -1,2 +1,3 @@
 T | 1 | read book
 E | 0 | project meeting | Aug 6th 2pm | 4pm
+E | 0 | Alson attend CS2113 lecture | Friday 20 Feb 2026 4pm | 6pm
