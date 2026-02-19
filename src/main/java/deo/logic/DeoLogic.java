@@ -5,10 +5,10 @@ import task.Deadline;
 import task.Event;
 import task.Task;
 import task.Todo;
+import java.util.ArrayList;
 
 public class DeoLogic {
-    private final Task[] tasks = new Task[100];
-    private int taskCount = 0;
+    private final ArrayList<Task> tasks = new ArrayList<>();
     private boolean exit = false;
 
     public boolean isExit() {
@@ -92,24 +92,21 @@ public class DeoLogic {
         addTask(new Event(desc, from, to));
     }
 
-    private void addTask(Task t) throws DeoException {
-        if (taskCount >= tasks.length) {
-            throw new DeoException("dumb ahh Task list is full.");
-        }
-        tasks[taskCount++] = t;
+    private void addTask(Task t) {
+        tasks.add(t);
         System.out.println(" Got it. I've added this task:");
         System.out.println("  " + t);
-        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
     }
 
     private void listTasks() {
         System.out.println(" Here are the tasks in your list:");
-        if (taskCount == 0) {
+        if (tasks.isEmpty()) {
             System.out.println(" No tasks");
             return;
         }
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println(" " + (i + 1) + "." + tasks[i]);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(" " + (i + 1) + "." + tasks.get(i));
         }
     }
 
@@ -118,9 +115,9 @@ public class DeoLogic {
         if (index == -1) {
             throw new DeoException("dumb ahh Please give a valid task number.");
         }
-        tasks[index].markAsDone();
+        tasks.get(index).markAsDone();
         System.out.println(" Nice! I've marked this task as done:");
-        System.out.println("  " + tasks[index]);
+        System.out.println("  " + tasks.get(index));
     }
 
     private void unmarkTask(String numStr) throws DeoException {
@@ -128,9 +125,9 @@ public class DeoLogic {
         if (index == -1) {
             throw new DeoException("dumb ahh Please give a valid task number.");
         }
-        tasks[index].markAsUndone();
+        tasks.get(index).markAsUndone();
         System.out.println(" OK, I've marked this task as not done yet:");
-        System.out.println("  " + tasks[index]);
+        System.out.println("  " + tasks.get(index));
     }
 
     private void deleteTask(String numStr) throws DeoException {
@@ -139,23 +136,17 @@ public class DeoLogic {
             throw new DeoException("dumb ahh Please give a valid task number.");
         }
 
-        Task removed = tasks[index];
-
-        for (int i = index; i < taskCount - 1; i++) {
-            tasks[i] = tasks[i + 1];
-        }
-        tasks[taskCount - 1] = null;
-        taskCount--;
+        Task removed = tasks.remove(index);
 
         System.out.println(" Noted. I've removed this task:");
         System.out.println("  " + removed);
-        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
     }
 
     private int parseIndex(String numStr) {
         try {
             int idx = Integer.parseInt(numStr.trim()) - 1;
-            if (idx < 0 || idx >= taskCount) {
+            if (idx < 0 || idx >= tasks.size()) {
                 return -1;
             }
             return idx;
