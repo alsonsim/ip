@@ -45,6 +45,10 @@ public class DeoLogic {
                 addEvent(input.substring(6).trim());
                 return;
             }
+            if (input.startsWith("delete ")) {
+                deleteTask(input.substring(7));
+                return;
+            }
 
             throw new DeoException("I'm too stupid to understand what you mean");
 
@@ -127,6 +131,25 @@ public class DeoLogic {
         tasks[index].markAsUndone();
         System.out.println(" OK, I've marked this task as not done yet:");
         System.out.println("  " + tasks[index]);
+    }
+
+    private void deleteTask(String numStr) throws DeoException {
+        int index = parseIndex(numStr);
+        if (index == -1) {
+            throw new DeoException("dumb ahh Please give a valid task number.");
+        }
+
+        Task removed = tasks[index];
+
+        for (int i = index; i < taskCount - 1; i++) {
+            tasks[i] = tasks[i + 1];
+        }
+        tasks[taskCount - 1] = null;
+        taskCount--;
+
+        System.out.println(" Noted. I've removed this task:");
+        System.out.println("  " + removed);
+        System.out.println(" Now you have " + taskCount + " tasks in the list.");
     }
 
     private int parseIndex(String numStr) {
