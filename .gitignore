@@ -18,5 +18,3 @@ text-ui-test/EXPECTED-UNIX.TXT
 
 .vscode/
 eclipse-java-formatter.xml
-
-*.jar
