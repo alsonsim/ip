@@ -8,8 +8,14 @@ import task.Todo;
 import java.util.ArrayList;
 
 public class DeoLogic {
-    private final ArrayList<Task> tasks = new ArrayList<>();
+    private final ArrayList<Task> tasks;
+    private final Storage storage;
     private boolean exit = false;
+
+    public DeoLogic() {
+        storage = new Storage("data" + java.io.File.separator + "deo.txt");
+        tasks = storage.load();
+    }
 
     public boolean isExit() {
         return exit;
@@ -94,6 +100,7 @@ public class DeoLogic {
 
     private void addTask(Task t) {
         tasks.add(t);
+        storage.save(tasks);
         System.out.println(" Got it. I've added this task:");
         System.out.println("  " + t);
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
@@ -116,6 +123,7 @@ public class DeoLogic {
             throw new DeoException("dumb ahh Please give a valid task number.");
         }
         tasks.get(index).markAsDone();
+        storage.save(tasks);
         System.out.println(" Nice! I've marked this task as done:");
         System.out.println("  " + tasks.get(index));
     }
@@ -126,6 +134,7 @@ public class DeoLogic {
             throw new DeoException("dumb ahh Please give a valid task number.");
         }
         tasks.get(index).markAsUndone();
+        storage.save(tasks);
         System.out.println(" OK, I've marked this task as not done yet:");
         System.out.println("  " + tasks.get(index));
     }
@@ -135,9 +144,8 @@ public class DeoLogic {
         if (index == -1) {
             throw new DeoException("dumb ahh Please give a valid task number.");
         }
-
         Task removed = tasks.remove(index);
-
+        storage.save(tasks);
         System.out.println(" Noted. I've removed this task:");
         System.out.println("  " + removed);
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
