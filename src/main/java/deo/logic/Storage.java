@@ -25,7 +25,7 @@ public class Storage {
     public ArrayList<Task> load() {
         ArrayList<Task> tasks = new ArrayList<>();
         if (!Files.exists(filePath)) {
-            return tasks; // first run, no file yet
+            return tasks;
         }
         try (BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
             String line;
@@ -60,7 +60,7 @@ public class Storage {
             return "T | " + (t.isDone() ? "1" : "0") + " | " + t.getDescription();
         } else if (t instanceof Deadline) {
             Deadline d = (Deadline) t;
-            return "D | " + (d.isDone() ? "1" : "0") + " | " + d.getDescription() + " | " + d.getBy();
+            return "D | " + (d.isDone() ? "1" : "0") + " | " + d.getDescription() + " | " + d.getByRaw();
         } else if (t instanceof Event) {
             Event e = (Event) t;
             return "E | " + (e.isDone() ? "1" : "0") + " | " + e.getDescription() + " | " + e.getFrom() + " | "
@@ -91,10 +91,10 @@ public class Storage {
                     e.markAsDone();
                 return e;
             default:
-                return null; // corrupted line — skip it
+                return null;
             }
         } catch (Exception e) {
-            return null; // corrupted line — skip it
+            return null;
         }
     }
 }

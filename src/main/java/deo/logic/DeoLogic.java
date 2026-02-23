@@ -63,7 +63,11 @@ public class DeoLogic {
         if (desc.isEmpty() || by.isEmpty()) {
             throw new DeoException("dummy Use: deadline DESCRIPTION /by BY");
         }
-        addTask(new Deadline(desc, by));
+        try {
+            addTask(new Deadline(desc, by));
+        } catch (Exception e) {
+            throw new DeoException(e.getMessage());
+        }
     }
 
     private void addEvent(String rest) throws DeoException {
