@@ -1,10 +1,18 @@
-package ui;
+package deo.ui;
 
 import java.util.Scanner;
 
 public class Ui {
     private static final String LINE = "____________________________________________________________";
-    private static final String ASCII_ART = "..."; // paste your existing art
+    private static final String ASCII_ART = "___________ _______________________________________^__\n"
+                                    + " ___ ___ ||| ___ ___ ___ ___ ___ | __ ,----\\\n"
+                                    + "| | | |||| | | | | | | | | | | | | |_____\\\n"
+                                    + "|___| |___|||| |___| |___| |___| | O | O | | | | \\\n"
+                                    + "           |||                   |___|___| | |__| )\n"
+                                    + "___________|||______________________________|______________/\n"
+                                    + "           ||| I'd rather be at DisneyWorld... /--------\n"
+                                    + "-----------'''---------------------------------------'\n";
+
     private final Scanner scanner = new Scanner(System.in);
 
     public void showWelcome() {
@@ -24,8 +32,9 @@ public class Ui {
     }
 
     public void showMessage(String... lines) {
-        for (String l : lines)
+        for (String l : lines) {
             System.out.println(" " + l);
+        }
     }
 
     public void showError(String msg) {
@@ -33,7 +42,7 @@ public class Ui {
     }
 
     public void showLoadingError() {
-        System.out.println(" Warning: could not read save file.");
+        System.out.println(" Warning: could not read save file. Starting fresh.");
     }
 
     public void showBye() {
