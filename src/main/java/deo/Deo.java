@@ -1,39 +1,54 @@
-import java.util.Scanner;
+package deo;
 
+import exception.DeoException;
 import logic.DeoLogic;
+import logic.Parser;
+import logic.Storage;
+import logic.TaskList;
+import ui.Ui;
 
 public class Deo {
-    private static final DeoLogic logic = new DeoLogic();
+    private final Storage storage;
+    private final TaskList tasks;
+    private final Ui ui;
 
-    private static final String ASCII_ART = "___________   _______________________________________^__\n"
-                                    + " ___   ___ |||  ___   ___   ___    ___ ___  |   __  ,----\\\n"
-                                    + "|   | |   |||| |   | |   | |   |  |   |   | |  |  | |_____\\\n"
-                                    + "|___| |___|||| |___| |___| |___|  | O | O | |  |  |        \\\n"
-                                    + "           |||                    |___|___| |  |__|         )\n"
-                                    + "___________|||______________________________|______________/\n"
-                                    + "           |||     I'd rather be at DisneyWorld...    /--------\n"
-                                    + "-----------'''---------------------------------------'\n";
+    public Deo(String filePath) {
+        ui = new Ui();
+        storage = new Storage(filePath);
+        TaskList loaded;
+        try {
+            loaded = new TaskList(storage.load());
+        } catch (Exception e) {
+            ui.showLoadingError();
+            loaded = new TaskList();
+        }
+        tasks = loaded;
+    }
 
-    public static void main(String[] args) {
-        String line = "____________________________________________________________";
-        System.out.println(ASCII_ART);
-        System.out.println(line);
-        System.out.println(" Hello! I'm Deo");
-        System.out.println(" What can I do for you?");
-        System.out.println(line);
-
-        try (Scanner scanner = new Scanner(System.in)) {
-            while (true) {
-                String input = scanner.nextLine().trim();
-                System.out.println(line);
-                logic.handleCommand(input);
-                if (logic.isExit()) {
-                    System.out.println(" Bye. Hope to see you again soon!");
-                    System.out.println(line);
-                    break;
+    public void run() {
+        ui.showWelcome();
+        DeoLogic logic = new DeoLogic(tasks, storage, ui);
+        boolean isExit = false;
+        while (!isExit) {
+            try {
+                String fullCommand = ui.readCommand();
+                ui.showLine();
+                String[] parsed = Parser.parse(fullCommand);
+                if (parsed[0].equals("bye")) {
+                    ui.showBye();
+                    isExit = true;
+                } else {
+                    logic.handleCommand(parsed);
                 }
-                System.out.println(line);
+            } catch (DeoException e) {
+                ui.showError(e.getMessage());
+            } finally {
+                ui.showLine();
             }
         }
+    }
+
+    public static void main(String[] args) {
+        new Deo("data" + java.io.File.separator + "deo.txt").run();
     }
 }

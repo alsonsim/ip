@@ -1,65 +1,48 @@
-package logic;
+package deo.logic;
 
 import exception.DeoException;
 import task.Deadline;
 import task.Event;
 import task.Task;
 import task.Todo;
-import java.util.ArrayList;
+import ui.Ui;
 
 public class DeoLogic {
-    private final ArrayList<Task> tasks;
+    private final TaskList tasks;
     private final Storage storage;
-    private boolean exit = false;
+    private final Ui ui;
 
-    public DeoLogic() {
-        storage = new Storage("data" + java.io.File.separator + "deo.txt");
-        tasks = storage.load();
+    public DeoLogic(TaskList tasks, Storage storage, Ui ui) {
+        this.tasks = tasks;
+        this.storage = storage;
+        this.ui = ui;
     }
 
-    public boolean isExit() {
-        return exit;
-    }
-
-    public void handleCommand(String input) {
-        try {
-            if (input.equals("list")) {
-                listTasks();
-                return;
-            }
-            if (input.startsWith("mark ")) {
-                markTask(input.substring(5));
-                return;
-            }
-            if (input.startsWith("unmark ")) {
-                unmarkTask(input.substring(7));
-                return;
-            }
-            if (input.equals("bye")) {
-                exit = true;
-                return;
-            }
-            if (input.startsWith("todo ")) {
-                addTodo(input.substring(5).trim());
-                return;
-            }
-            if (input.startsWith("deadline ")) {
-                addDeadline(input.substring(9).trim());
-                return;
-            }
-            if (input.startsWith("event ")) {
-                addEvent(input.substring(6).trim());
-                return;
-            }
-            if (input.startsWith("delete ")) {
-                deleteTask(input.substring(7));
-                return;
-            }
-
+    public void handleCommand(String[] parsed) throws DeoException {
+        switch (parsed[0]) {
+        case "list":
+            listTasks();
+            break;
+        case "mark":
+            markTask(parsed[1]);
+            break;
+        case "unmark":
+            unmarkTask(parsed[1]);
+            break;
+        case "delete":
+            deleteTask(parsed[1]);
+            break;
+        case "todo":
+            addTodo(parsed[1]);
+            break;
+        case "deadline":
+            addDeadline(parsed[1]);
+            break;
+        case "event":
+            addEvent(parsed[1]);
+            break;
+        default:
             throw new DeoException("I'm too stupid to understand what you mean");
-
-        } catch (DeoException e) {
-            System.out.println(" NO " + e.getMessage());
         }
     }
 
@@ -100,66 +83,53 @@ public class DeoLogic {
 
     private void addTask(Task t) {
         tasks.add(t);
-        storage.save(tasks);
-        System.out.println(" Got it. I've added this task:");
-        System.out.println("  " + t);
-        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        storage.save(tasks.getAll());
+        ui.showMessage("Got it. I've added this task:", "  " + t,
+                                        "Now you have " + tasks.size() + " tasks in the list.");
     }
 
     private void listTasks() {
-        System.out.println(" Here are the tasks in your list:");
+        ui.showMessage("Here are the tasks in your list:");
         if (tasks.isEmpty()) {
-            System.out.println(" No tasks");
+            ui.showMessage("No tasks");
             return;
         }
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(" " + (i + 1) + "." + tasks.get(i));
+            ui.showMessage((i + 1) + "." + tasks.get(i));
         }
     }
 
     private void markTask(String numStr) throws DeoException {
         int index = parseIndex(numStr);
-        if (index == -1) {
-            throw new DeoException("dumb ahh Please give a valid task number.");
-        }
         tasks.get(index).markAsDone();
-        storage.save(tasks);
-        System.out.println(" Nice! I've marked this task as done:");
-        System.out.println("  " + tasks.get(index));
+        storage.save(tasks.getAll());
+        ui.showMessage("Nice! I've marked this task as done:", "  " + tasks.get(index));
     }
 
     private void unmarkTask(String numStr) throws DeoException {
         int index = parseIndex(numStr);
-        if (index == -1) {
-            throw new DeoException("dumb ahh Please give a valid task number.");
-        }
         tasks.get(index).markAsUndone();
-        storage.save(tasks);
-        System.out.println(" OK, I've marked this task as not done yet:");
-        System.out.println("  " + tasks.get(index));
+        storage.save(tasks.getAll());
+        ui.showMessage("OK, I've marked this task as not done yet:", "  " + tasks.get(index));
     }
 
     private void deleteTask(String numStr) throws DeoException {
         int index = parseIndex(numStr);
-        if (index == -1) {
-            throw new DeoException("dumb ahh Please give a valid task number.");
-        }
         Task removed = tasks.remove(index);
-        storage.save(tasks);
-        System.out.println(" Noted. I've removed this task:");
-        System.out.println("  " + removed);
-        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        storage.save(tasks.getAll());
+        ui.showMessage("Noted. I've removed this task:", "  " + removed,
+                                        "Now you have " + tasks.size() + " tasks in the list.");
     }
 
-    private int parseIndex(String numStr) {
+    private int parseIndex(String numStr) throws DeoException {
         try {
             int idx = Integer.parseInt(numStr.trim()) - 1;
             if (idx < 0 || idx >= tasks.size()) {
-                return -1;
+                throw new DeoException("dumb ahh Please give a valid task number.");
             }
             return idx;
         } catch (NumberFormatException e) {
-            return -1;
+            throw new DeoException("dumb ahh Please give a valid task number.");
         }
     }
 }
