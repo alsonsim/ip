@@ -1,5 +1,7 @@
 package logic;
 
+import java.util.ArrayList;
+
 import exception.DeoException;
 import task.Deadline;
 import task.Event;
@@ -41,8 +43,23 @@ public class DeoLogic {
         case "event":
             addEvent(parsed[1]);
             break;
+        case "find":
+            findTasks(parsed[1]);
+            break;
         default:
             throw new DeoException("I'm too stupid to understand what you mean");
+        }
+    }
+
+    private void findTasks(String keyword) {
+        ArrayList<Task> results = tasks.find(keyword);
+        if (results.isEmpty()) {
+            ui.showMessage("No matching tasks found.");
+            return;
+        }
+        ui.showMessage("Here are the matching tasks in your list:");
+        for (int i = 0; i < results.size(); i++) {
+            ui.showMessage((i + 1) + "." + results.get(i));
         }
     }
 

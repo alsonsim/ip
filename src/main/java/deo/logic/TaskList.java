@@ -38,4 +38,14 @@ public class TaskList {
     public ArrayList<Task> getAll() {
         return tasks;
     }
+
+    public ArrayList<Task> find(String keyword) {
+        ArrayList<Task> results = new ArrayList<>();
+        for (Task t : tasks) {
+            if (t.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
+                results.add(t);
+            }
+        }
+        return results;
+    }
 }

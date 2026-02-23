@@ -20,6 +20,8 @@ public class Parser {
             return new String[] { "deadline", input.substring(9).trim() };
         if (input.startsWith("event "))
             return new String[] { "event", input.substring(6).trim() };
+        if (input.startsWith("find "))
+            return new String[] { "find", input.substring(5).trim() };
         throw new DeoException("I'm too stupid to understand what you mean");
     }
 }
