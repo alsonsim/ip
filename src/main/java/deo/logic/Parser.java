@@ -1,4 +1,4 @@
-package deo.logic;
+package logic;
 
 import exception.DeoException;
 

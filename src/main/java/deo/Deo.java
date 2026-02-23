@@ -1,5 +1,3 @@
-package deo;
-
 import exception.DeoException;
 import logic.DeoLogic;
 import logic.Parser;
