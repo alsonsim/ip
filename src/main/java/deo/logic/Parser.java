@@ -2,7 +2,19 @@ package logic;
 
 import exception.DeoException;
 
+/**
+ * Parses raw user input into structured command tokens.
+ */
 public class Parser {
+
+    /**
+     * Parses a full command string into a string array where index 0 is the
+     * command keyword and subsequent indices contain the arguments.
+     *
+     * @param input The raw input string from the user.
+     * @return A string array of command tokens.
+     * @throws DeoException If the command is not recognised.
+     */
     public static String[] parse(String input) throws DeoException {
         if (input.equals("list"))
             return new String[] { "list" };

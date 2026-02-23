@@ -9,17 +9,34 @@ import task.Task;
 import task.Todo;
 import ui.Ui;
 
+/**
+ * Contains the core business logic for handling Deo chatbot commands.
+ */
 public class DeoLogic {
     private final TaskList tasks;
     private final Storage storage;
     private final Ui ui;
 
+    /**
+     * Constructs a DeoLogic instance with the required dependencies.
+     *
+     * @param tasks The task list to operate on.
+     * @param storage The storage handler for saving tasks.
+     * @param ui The UI handler for displaying output.
+     */
     public DeoLogic(TaskList tasks, Storage storage, Ui ui) {
         this.tasks = tasks;
         this.storage = storage;
         this.ui = ui;
     }
 
+    /**
+     * Executes the command represented by the parsed token array.
+     *
+     * @param parsed Token array where index 0 is the command keyword.
+     * @throws DeoException If the command is invalid or arguments are
+     * malformed.
+     */
     public void handleCommand(String[] parsed) throws DeoException {
         switch (parsed[0]) {
         case "list":
