@@ -13,6 +13,15 @@ import ui.Ui;
  * Contains the core business logic for handling Deo chatbot commands.
  */
 public class DeoLogic {
+    private static final String CMD_LIST = "list";
+    private static final String CMD_MARK = "mark";
+    private static final String CMD_UNMARK = "unmark";
+    private static final String CMD_DELETE = "delete";
+    private static final String CMD_TODO = "todo";
+    private static final String CMD_DEADLINE = "deadline";
+    private static final String CMD_EVENT = "event";
+    private static final String CMD_FIND = "find";
+
     private final TaskList tasks;
     private final Storage storage;
     private final Ui ui;
@@ -39,28 +48,28 @@ public class DeoLogic {
      */
     public void handleCommand(String[] parsed) throws DeoException {
         switch (parsed[0]) {
-        case "list":
+        case CMD_LIST:
             listTasks();
             break;
-        case "mark":
+        case CMD_MARK:
             markTask(parsed[1]);
             break;
-        case "unmark":
+        case CMD_UNMARK:
             unmarkTask(parsed[1]);
             break;
-        case "delete":
+        case CMD_DELETE:
             deleteTask(parsed[1]);
             break;
-        case "todo":
+        case CMD_TODO:
             addTodo(parsed[1]);
             break;
-        case "deadline":
+        case CMD_DEADLINE:
             addDeadline(parsed[1]);
             break;
-        case "event":
+        case CMD_EVENT:
             addEvent(parsed[1]);
             break;
-        case "find":
+        case CMD_FIND:
             findTasks(parsed[1]);
             break;
         default:
@@ -87,13 +96,13 @@ public class DeoLogic {
         addTask(new Todo(desc));
     }
 
-    private void addDeadline(String rest) throws DeoException {
-        int split = rest.indexOf(" /by ");
+    private void addDeadline(String deadlineArgs) throws DeoException {
+        int split = deadlineArgs.indexOf(" /by ");
         if (split <= 0) {
             throw new DeoException("dummy Use: deadline DESCRIPTION /by BY");
         }
-        String desc = rest.substring(0, split).trim();
-        String by = rest.substring(split + 5).trim();
+        String desc = deadlineArgs.substring(0, split).trim();
+        String by = deadlineArgs.substring(split + 5).trim();
         if (desc.isEmpty() || by.isEmpty()) {
             throw new DeoException("dummy Use: deadline DESCRIPTION /by BY");
         }
@@ -104,15 +113,15 @@ public class DeoLogic {
         }
     }
 
-    private void addEvent(String rest) throws DeoException {
-        int fromIdx = rest.indexOf(" /from ");
-        int toIdx = rest.indexOf(" /to ");
+    private void addEvent(String eventArgs) throws DeoException {
+        int fromIdx = eventArgs.indexOf(" /from ");
+        int toIdx = eventArgs.indexOf(" /to ");
         if (fromIdx <= 0 || toIdx <= 0 || toIdx <= fromIdx) {
             throw new DeoException("dumb ahh Use: event DESCRIPTION /from FROM /to TO");
         }
-        String desc = rest.substring(0, fromIdx).trim();
-        String from = rest.substring(fromIdx + 7, toIdx).trim();
-        String to = rest.substring(toIdx + 5).trim();
+        String desc = eventArgs.substring(0, fromIdx).trim();
+        String from = eventArgs.substring(fromIdx + 7, toIdx).trim();
+        String to = eventArgs.substring(toIdx + 5).trim();
         if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
             throw new DeoException("dumb ahh Use: event DESCRIPTION /from FROM /to TO");
         }
@@ -137,31 +146,31 @@ public class DeoLogic {
         }
     }
 
-    private void markTask(String numStr) throws DeoException {
-        int index = parseIndex(numStr);
+    private void markTask(String taskNumberStr) throws DeoException {
+        int index = parseIndex(taskNumberStr);
         tasks.get(index).markAsDone();
         storage.save(tasks.getAll());
         ui.showMessage("Nice! I've marked this task as done:", "  " + tasks.get(index));
     }
 
-    private void unmarkTask(String numStr) throws DeoException {
-        int index = parseIndex(numStr);
+    private void unmarkTask(String taskNumberStr) throws DeoException {
+        int index = parseIndex(taskNumberStr);
         tasks.get(index).markAsUndone();
         storage.save(tasks.getAll());
         ui.showMessage("OK, I've marked this task as not done yet:", "  " + tasks.get(index));
     }
 
-    private void deleteTask(String numStr) throws DeoException {
-        int index = parseIndex(numStr);
+    private void deleteTask(String taskNumberStr) throws DeoException {
+        int index = parseIndex(taskNumberStr);
         Task removed = tasks.remove(index);
         storage.save(tasks.getAll());
         ui.showMessage("Noted. I've removed this task:", "  " + removed,
                                         "Now you have " + tasks.size() + " tasks in the list.");
     }
 
-    private int parseIndex(String numStr) throws DeoException {
+    private int parseIndex(String taskNumberStr) throws DeoException {
         try {
-            int idx = Integer.parseInt(numStr.trim()) - 1;
+            int idx = Integer.parseInt(taskNumberStr.trim()) - 1;
             if (idx < 0 || idx >= tasks.size()) {
                 throw new DeoException("dumb ahh Please give a valid task number.");
             }
